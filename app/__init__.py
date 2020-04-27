@@ -4,7 +4,7 @@
 # @Author: Arrack
 # @Date:   2020-04-26 21:50:25
 # @Last modified by:   Arrack
-# @Last Modified time: 2020-04-27 16:40:31
+# @Last Modified time: 2020-04-27 20:59:31
 #
 
 import click
@@ -23,9 +23,15 @@ def create_app():
     # with app.app_context():
     #     db.create_all()
 
+    register_blueprint(app)
     register_command(app)
 
     return app
+
+
+def register_blueprint(app):
+    from app.views import web
+    app.register_blueprint(web)
 
 
 def register_command(app):
@@ -33,11 +39,9 @@ def register_command(app):
     @click.option('--drop', is_flag=True, help='Create after drop.')
     def initdb(drop):
         if drop:
-            click.confirm(
-                'This operation will delete the database, '
-                'do you want to continue?')
-            db.drop_all()
-            click.echo('All tables have been dropped.')
+            if click.confirm('This operation will DROP ALL TABLES, continue?'):
+                db.drop_all()
+                click.echo('All tables have been dropped.')
         db.create_all()
         click.echo('Initialized database.')
 

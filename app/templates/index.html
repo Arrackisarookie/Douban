@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content -%}
+ <div id="content">
+  <h1>
+   豆瓣电影 Top 250
+  </h1>
+  <div class="grid-16-8 clearfix">
+   <div class="article">
+    <ol class="grid_view">
+     {% for movie in movies %}
+     <li>
+      <div class="item">
+       <div class="pic">
+        <em class="">
+         {{ movie.rank }}
+        </em>
+        <a href="{{ url_for('web.movie', mid=movie.id) }}">
+         <img alt="{{ movie.title }}" src="{{ movie.imgSrc }}" width="100"/>
+        </a>
+       </div>
+       <div class="info">
+        <div class="hd">
+         <a class="" href="{{ url_for('web.movie', mid=movie.id) }}">
+          <span class="title">
+           {{ movie.title }}
+          </span>
+          <span class="other">
+           / {{ movie.alias }}
+          </span>
+         </a>
+        </div>
+        <div class="bd">
+         <p class="">
+          {{ movie.director }}
+          <br/>
+          {{ movie.year }} / {{ movie.countryRegion }} / {{ movie.type }}
+         </p>
+         <div class="star">
+          <span class="rating_num" property="v:average">
+           {{ movie.ratingNum }}
+          </span>
+          <span content="10.0" property="v:best">
+          </span>
+          <span>
+           1{{ movie.participantsNum }}人评价
+          </span>
+         </div>
+         <p class="quote">
+          <span class="inq">
+           {{ movie.quote }}
+          </span>
+         </p>
+        </div>
+       </div>
+      </div>
+     </li>
+     {% endfor %}
+    </ol>
+    <div class="paginator">
+     {% if paginate.has_prev %}
+      <a href="{{ url_for('web.top250', p=paginate.prev_num) }}">上一页</a>
+     {% endif %}
+
+     {% for page in paginate.iter_pages() %}
+      {% if page %}
+       <a href="{{ url_for('web.top250', p=page) }}">{{ page }}</a>
+      {% else %}
+       <a href="#" style="pointer-events: none">&hellip;</a>
+      {% endif %}
+     {% endfor %}
+
+     {% if paginate.has_next %}
+      <a href="{{ url_for('web.top250', p=paginate.next_num) }}">下一页</a>
+     {% endif %}
+    </div>
+   </div>
+   <div class="aside">
+    <p class="pl">
+     豆瓣用户每天都在对“看过”的电影进行“很差”到“力荐”的评价，豆瓣根据每部影片看过的人数以及该影片所得的评价等综合数据，通过算法分析产生豆瓣电影 Top 250。
+    </p>
+    <!-- douban ad begin -->
+    <div class="mobile-app-entrance block5 app-movie">
+     <a class="entrance-link" href="#">
+      <div class="entrance-qrcode">
+       <img alt="扫码下载豆瓣 App" height="80" src="http://www.528btc.com/d/file/2019-04-26/89475b9445ea759d960cd432950e95fb.png" width="80"/>
+      </div>
+      <div class="entrance-info">
+       <span class="app-icon icon-movie">
+       </span>
+       <span class="main-title">
+        豆瓣
+       </span>
+       <span class="sub-title">
+        让好电影来找你
+       </span>
+      </div>
+     </a>
+    </div>
+    <!-- douban ad end -->
+   </div>
+   <div class="extra">
+   </div>
+  </div>
+ </div>
+{%- endblock content %}

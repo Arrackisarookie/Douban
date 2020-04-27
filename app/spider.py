@@ -4,14 +4,18 @@
 # @Author: Arrack
 # @Date:   2020-04-26 16:40:10
 # @Last modified by:   Arrack
-# @Last Modified time: 2020-04-26 23:59:08
+# @Last Modified time: 2020-04-27 17:51:13
 #
 
-from bs4 import BeautifulSoup
 import requests
 
-from app.models import db, Movie
+from bs4 import BeautifulSoup
 
+from app.models import Movie
+from app.models import db
+
+
+# todo: 多线程
 
 class DoubanSpider(object):
     baseUrl = 'https://movie.douban.com/top250'
@@ -27,6 +31,8 @@ class DoubanSpider(object):
     urls = []
 
     def getMoviesPerPage(self, start=0):
+        ''' 获取一页中各电影的排名，网址和 quote '''
+
         params = {
             'start': start
         }
@@ -38,20 +44,25 @@ class DoubanSpider(object):
             movie = {}
             movie['rank'] = int(item.em.text)
             movie['url'] = item.find('a')['href']
-            movie['quote'] = item.find(class_='quote').text.strip()
+            quote = item.find(class_='quote')
+            movie['quote'] = quote.text.strip() if quote else ''
             self.movies.append(movie)
             self.urls.append(movie['url'])
 
     def getMovies(self):
+        ''' 遍历获取 self.urls 中电影 '''
+
         for i, url in enumerate(self.urls):
             movie = self.getMovie(url)
             self.movies[i].update(movie)
             m = Movie()
             m.setAttrs(self.movies[i])
-            print(m.title)
+            print(m.rank, m.title)
             db.session.add(m)
 
     def getMovie(self, url):
+        ''' 获取电影具体信息 '''
+
         movie = {}
         response = requests.get(url, headers=self.headers)
         soup = BeautifulSoup(response.text, 'lxml')
@@ -60,8 +71,11 @@ class DoubanSpider(object):
         info = subject.find(id='info')
         interest = content.find(id='interest_sectl')
 
+        summary = content.find(id='link-report').select('span')
+        summary = summary[-2] if len(summary) > 1 else summary[0]
+
         movie['title'] = content.find('h1').find('span').text
-        movie['summary'] = ''.join(content.find(id='link-report').select('span')[-2].text.split())
+        movie['summary'] = ''.join(summary.text.split())
         movie['year'] = content.find(class_='year').text.replace('(', '').replace(')', '')
         movie['imgSrc'] = subject.find('img')['src']
         movie['ratingNum'] = float(interest.find('strong').text)
@@ -74,6 +88,8 @@ class DoubanSpider(object):
         return movie
 
     def _parseInfo(self, info):
+        ''' 解析 info 中的具体信息 '''
+
         mapping = {
             '导演': 'director', '编剧': 'screenwriter', '主演': 'stars',
             '类型': 'type', '制片国家/地区': 'countryRegion',
@@ -100,16 +116,28 @@ class DoubanSpider(object):
         return movie
 
     def saveMovies(self):
+        ''' 写入数据库 '''
+
         try:
             db.session.commit()
         except Exception as e:
             db.session.rollback()
             raise e
 
+    def clean(self):
+        ''' 清理 '''
+
+        self.movies = []
+        self.urls = []
+
     def run(self):
-        self.getMoviesPerPage()
-        self.getMovies()
-        self.saveMovies()
+        ''' 驱动 '''
+
+        for i in range(0, 226, 25):
+            self.getMoviesPerPage(start=i)
+            self.getMovies()
+            self.saveMovies()
+            self.clean()
 
 
 if __name__ == '__main__':

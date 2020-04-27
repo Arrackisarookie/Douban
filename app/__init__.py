@@ -4,7 +4,7 @@
 # @Author: Arrack
 # @Date:   2020-04-26 21:50:25
 # @Last modified by:   Arrack
-# @Last Modified time: 2020-04-26 22:43:24
+# @Last Modified time: 2020-04-27 16:40:31
 #
 
 import click
@@ -15,9 +15,9 @@ from app.spider import DoubanSpider
 
 
 def create_app():
-    app = Flask(__name__)
-    app.config.from_object('app.secure')
+    app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('app.config')
+    app.config.from_pyfile('secure.py')
 
     db.init_app(app)
     # with app.app_context():

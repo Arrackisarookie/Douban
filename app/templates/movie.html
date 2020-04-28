@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block head -%}
+ {{ super() }}
+ <link href="https://img3.doubanio.com/misc/mixed_static/36c0e5f6c8538558.css" rel="stylesheet"/>
+{%- endblock %}
+
+{% block content -%}
+ <div id="content">
+  <!-- top 250 begin -->
+  <div class="top250">
+   <span class="top250-no">
+    No.{{ movie.rank }}
+   </span>
+   <span class="top250-link">
+    <a href="https://movie.douban.com/top250" target="_blank">
+     豆瓣电影Top250
+    </a>
+   </span>
+  </div>
+  <!-- top 250 end -->
+  <div id="dale_movie_subject_top_icon">
+  </div>
+  <h1>
+   <span property="v:itemreviewed">
+    {{ movie.title }}
+   </span>
+   <span class="year">
+    ({{ movie.year }})
+   </span>
+  </h1>
+  <div class="grid-16-8 clearfix">
+   <div class="article">
+    <div class="indent clearfix">
+     <div class="subjectwrap clearfix">
+      <div class="subject clearfix">
+       <div class="" id="mainpic">
+        <img alt="The Shawshank Redemption" rel="v:image" src="{{ movie.imgSrc }}" title="点击看更多海报"/>
+       </div>
+       <div id="info">
+        <span>
+         <span class="pl">
+          导演
+         </span>
+         :
+         <span class="attrs">
+          {{ movie.director }}
+         </span>
+        </span>
+        <br/>
+        <span>
+         <span class="pl">
+          编剧
+         </span>
+         :
+         <span class="attrs">
+          {{ movie.screenwriter }}
+         </span>
+        </span>
+        <br/>
+        <span class="actor">
+         <span class="pl">
+          主演
+         </span>
+         :
+         <span class="attrs" style="display: -webkit-box;overflow: hidden;text-overflow: ellipsis;-webkit-line-clamp: 2;-webkit-box-orient: vertical;">
+          {{ movie.stars }}
+         </span>
+        </span>
+        <span class="pl">
+         类型:
+        </span>
+        {{ movie.type }}
+        <br/>
+        <span class="pl">
+         制片国家/地区:
+        </span>
+        {{ movie.countryRegion }}
+        <br/>
+        <span class="pl">
+         语言:
+        </span>
+        {{ movie.language }}
+        <br/>
+        <span class="pl">
+         上映日期:
+        </span>
+        {{ movie.releaseDate }}
+        <br/>
+        <span class="pl">
+         片长:
+        </span>
+        {{ movie.duration }}
+        <br/>
+        <span class="pl">
+         又名:
+        </span>
+        {{ movie.alias }}
+        <br/>
+        <span class="pl">
+         IMDb链接:
+        </span>
+        <a href="{{ movie.imdbUrl }}" rel="nofollow" target="_blank">
+         {{ movie.imdbID }}
+        </a>
+        <br/>
+       </div>
+      </div>
+      <div id="interest_sectl">
+       <div class="rating_wrap clearbox" rel="v:rating">
+        <div class="clearfix">
+         <div class="rating_logo ll">
+          豆瓣评分
+         </div>
+         <div class="output-btn-wrap rr" style="display:none">
+          <img src="https://img3.doubanio.com/f/movie/692e86756648f29457847c5cc5e161d6f6b8aaac/pics/movie/reference.png"/>
+          <a class="download-output-image" href="#">
+           引用
+          </a>
+         </div>
+        </div>
+        <div class="rating_self clearfix" typeof="v:Rating">
+         <strong class="ll rating_num" property="v:average">
+          {{ movie.ratingNum }}
+         </strong>
+         <div class="rating_right">
+          <div class="ll bigstar bigstar50">
+          </div>
+          <div class="rating_sum">
+           <span property="v:votes">
+            {{ movie.participantsNum }}
+           </span>
+           人评价
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="related-info" style="margin-bottom:-10px;">
+     <a name="intro">
+     </a>
+     <h2>
+      <i class="">
+       {{ movie.title }}的剧情简介
+      </i>
+      · · · · · ·
+     </h2>
+     <div class="indent" id="link-report">
+      <span>
+       {{ movie.summary }}
+      </span>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+{%- endblock %}

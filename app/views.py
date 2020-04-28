@@ -4,7 +4,7 @@
 # @Author: Arrack
 # @Date:   2020-04-27 20:51:11
 # @Last modified by:   Arrack
-# @Last Modified time: 2020-04-27 22:10:56
+# @Last Modified time: 2020-04-28 13:58:41
 #
 
 from flask import Blueprint
@@ -19,7 +19,7 @@ from app.viewModels import IndexMovie
 web = Blueprint('web', __name__)
 
 
-@web.route('/top250', methods=['GET', 'POST'])
+@web.route('/top250', methods=['GET'])
 def top250():
     page = request.args.get('p')
     page = int(page) if page and page.isdigit() and int(page) else 1
@@ -28,6 +28,7 @@ def top250():
     return render_template('index.html', movies=movies, paginate=paginate)
 
 
-@web.route('/movie/<int:mid>')
+@web.route('/movie/<int:mid>', methods=['GET'])
 def movie(mid):
-    pass
+    movie = Movie.query.get(mid)
+    return render_template('movie.html', movie=movie)

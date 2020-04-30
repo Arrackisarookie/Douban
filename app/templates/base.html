@@ -57,22 +57,53 @@
       </a>
      </div>
      <div class="nav-search">
-      <form action="#" method="get">
+      <form method="post">
+        {{ form.csrf_token }}
        <fieldset>
         <legend>
          搜索：
         </legend>
-        <label for="inp-query">
+        <label for="query">
         </label>
-        <div class="inp">
-         <input id="inp-query" maxlength="60" name="search_text" placeholder="搜索电影、电视剧、综艺、影人" size="22" value=""/>
+        <div class="inp" id="inp">
+          {{ form.searchText(id="query", placeholder="搜索电影", maxlength="60", size="22") }}
         </div>
         <div class="inp-btn">
-         <input type="submit" value="搜索"/>
+         <input type="submit" value="搜索">
         </div>
-        <input name="cat" type="hidden" value="1002"/>
        </fieldset>
       </form>
+      <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script>
+        $(document).ready(function(){
+          var css = {
+            "margin-left": $("#inp").offset().left,
+            "width": $("#query").width() + 13,
+            "margin-top": $("#inp").offset().top
+          }
+          $('#search_suggest').css(css);
+          $("#query").keyup(function(){
+            if($("#ajaxtest").val() == ""){
+              $('#search_suggest').empty();
+            }
+            var q = $("#query").val();
+            $.get("{{ url_for('web.suggestion') }}",{'q': q}, function(data){
+              $('#search_suggest').empty();
+              for (var i = 0; i < data.length; i++) {
+                $('#search_suggest').append("<li style='list-style:none;'><a href='javascript:void(0)'><em>" + data[i][0] + "</em></a></li>")
+                $('#search_suggest').show()
+                $("#search_suggest li a").mousedown(function () {
+                  window.location.href="{{ url_for('web.search') }}?q=" + $(this).text();
+                });
+              };
+            })
+          });
+          $('#query').blur(function(){
+              $('#search_suggest').empty();
+              $('#search_suggest').hide();
+          })
+        });
+      </script>
      </div>
     </div>
    </div>
@@ -181,5 +212,6 @@
   <script>
    _SPLITTEST=''
   </script>
+  <div id="search_suggest" style="display: none;"><ul></ul></div>
  </body>
 </html>

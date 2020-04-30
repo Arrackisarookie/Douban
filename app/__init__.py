@@ -4,7 +4,7 @@
 # @Author: Arrack
 # @Date:   2020-04-26 21:50:25
 # @Last modified by:   Arrack
-# @Last Modified time: 2020-04-29 19:44:48
+# @Last Modified time: 2020-04-30 18:13:00
 #
 
 import click
@@ -34,6 +34,7 @@ def register_blueprint(app):
 
 def register_extensions(app):
     db.init_app(app)
+    db.create_all(app=app)
     sug.init_app(app)
 
 
